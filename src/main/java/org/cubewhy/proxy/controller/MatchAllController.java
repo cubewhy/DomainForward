@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -31,7 +32,7 @@ public class MatchAllController {
 
     @RequestMapping(value = "/**")
     public void forward(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        URI uri = new URI(request.getRequestURI());
+        URI uri = new URI(URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8));
         String host = ServletUriComponentsBuilder.fromCurrentRequest().build().getHost();
         String targetHost = null;
         if (host != null) {
@@ -46,10 +47,11 @@ public class MatchAllController {
         String path = uri.getPath();
         String query = request.getQueryString();
         String target = targetHost + path;
-        log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
         if (query != null && !query.isEmpty() && !query.equals("null")) {
-            target = target + "?" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+            target = target + "?" + query;
+
         }
+        log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
         URI newUri = new URI(target);
         String methodName = request.getMethod();
         HttpMethod httpMethod = HttpMethod.valueOf(methodName);
