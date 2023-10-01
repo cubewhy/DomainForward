@@ -48,9 +48,9 @@ public class MatchAllController {
         String target = targetHost + path;
         log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
         if (query != null && !query.isEmpty() && !query.equals("null")) {
-            target = target + "?" + query;
+            target = target + "?" + URLEncoder.encode(query, StandardCharsets.UTF_8);
         }
-        URI newUri = new URI(URLEncoder.encode(target, StandardCharsets.UTF_8));
+        URI newUri = new URI(target);
         String methodName = request.getMethod();
         HttpMethod httpMethod = HttpMethod.valueOf(methodName);
         ClientHttpRequest delegate = new SimpleClientHttpRequestFactory().createRequest(newUri, httpMethod);
