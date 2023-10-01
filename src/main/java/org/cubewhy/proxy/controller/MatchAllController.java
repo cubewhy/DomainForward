@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,7 +50,7 @@ public class MatchAllController {
         if (query != null && !query.isEmpty() && !query.equals("null")) {
             target = target + "?" + query;
         }
-        URI newUri = new URI(target);
+        URI newUri = new URI(URLEncoder.encode(target, StandardCharsets.UTF_8));
         String methodName = request.getMethod();
         HttpMethod httpMethod = HttpMethod.valueOf(methodName);
         ClientHttpRequest delegate = new SimpleClientHttpRequestFactory().createRequest(newUri, httpMethod);
