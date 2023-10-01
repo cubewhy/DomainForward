@@ -14,6 +14,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -29,8 +30,11 @@ public class MatchAllController {
     @RequestMapping(value = "/**", produces = MediaType.APPLICATION_JSON_VALUE)
     public void forward(HttpServletRequest request, HttpServletResponse response) throws Exception {
         URI uri = new URI(request.getRequestURI());
-        String host = request.getRemoteHost();
-        String targetHost = utils.getTargetHost(host);
+        String host = ServletUriComponentsBuilder.fromCurrentRequest().build().getHost();
+        String targetHost = null;
+        if (host != null) {
+            targetHost = utils.getTargetHost(host);
+        }
         if (targetHost == null) {
             log.error("Domain not found: " + host);
             response.setContentType("application/json; charset=UTF-8");
@@ -64,5 +68,6 @@ public class MatchAllController {
             clientHttpResponse.getHeaders().forEach((key, value) -> value.forEach(it -> response.setHeader(key, it)));
             StreamUtils.copy(clientHttpResponse.getBody(), response.getOutputStream());
         }
+        response.setHeader("X-Real-IP", request.getRemoteAddr());
     }
 }

@@ -18,12 +18,11 @@ public class FileUtils {
         return getClass().getResourceAsStream("/" + pathToFile);
     }
 
-    public InputStream getExternalFile(String pathToFile) {
+    public InputStream getExternalFile(String pathToFile) throws FileNotFoundException {
         return this.getExternalFile(new File(pathToFile));
     }
 
-    @SneakyThrows
-    public InputStream getExternalFile(File file) {
+    public InputStream getExternalFile(File file) throws FileNotFoundException {
         if (file.isFile()) {
             return new FileInputStream(file);
         } else {
@@ -31,8 +30,8 @@ public class FileUtils {
         }
     }
 
-    @SneakyThrows
-    public void extractFile(String filePath, @NotNull File toPath) {
+
+    public void extractFile(String filePath, @NotNull File toPath) throws IOException {
         InputStream stream = getFile(filePath);
         byte[] bytes = stream.readAllBytes();
         // do create file
@@ -43,7 +42,7 @@ public class FileUtils {
         }
     }
 
-    public void extractFile(String filePath, String toPath) {
+    public void extractFile(String filePath, String toPath) throws IOException {
         this.extractFile(filePath, new File(toPath));
     }
 

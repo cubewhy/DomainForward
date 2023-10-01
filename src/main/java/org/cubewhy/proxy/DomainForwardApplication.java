@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
+import java.io.IOException;
 
 @SpringBootApplication
 public class DomainForwardApplication {
@@ -13,7 +14,7 @@ public class DomainForwardApplication {
     public static final File applicationConfigFile = new File(configPath, "application.yml");
     public static final File configFile = new File(configPath, "config.json");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         configPath.mkdirs();
         new FileUtils().extractFile("application.yml", applicationConfigFile);
         System.setProperty("spring.config.location", applicationConfigFile.getAbsolutePath()); // set config
