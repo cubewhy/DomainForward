@@ -40,7 +40,7 @@ public class MatchAllController {
         String path = uri.getPath();
         String query = request.getQueryString();
         String target = targetHost + path;
-        log.info("Forward " + host + ":" + request.getRemotePort() + path + " to " + target);
+        log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
         if (query != null && !query.isEmpty() && !query.equals("null")) {
             target = target + "?" + query;
         }
