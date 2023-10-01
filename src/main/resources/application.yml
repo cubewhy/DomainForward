@@ -5,3 +5,4 @@ server:
     relaxed-path-chars: <,>,[,\,],^,`,{,|,}
   undertow:
     decode-slash: true
+
