@@ -1,2 +1,7 @@
 server:
   port: 80
+  tomcat:
+    relaxed-query-chars: <,>,[,\,],^,`,{,|,}
+    relaxed-path-chars: <,>,[,\,],^,`,{,|,}
+  undertow:
+    decode-slash: true

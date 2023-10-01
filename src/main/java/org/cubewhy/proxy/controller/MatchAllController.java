@@ -29,7 +29,7 @@ public class MatchAllController {
     @Resource
     SimpleUtils utils;
 
-    @RequestMapping(value = "/**", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/**")
     public void forward(HttpServletRequest request, HttpServletResponse response) throws Exception {
         URI uri = new URI(request.getRequestURI());
         String host = ServletUriComponentsBuilder.fromCurrentRequest().build().getHost();
