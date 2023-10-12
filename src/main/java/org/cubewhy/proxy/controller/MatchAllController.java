@@ -29,6 +29,8 @@ import java.util.Objects;
 public class MatchAllController {
     @Resource
     SimpleUtils utils;
+    @Resource
+    SimpleClientHttpRequestFactory httpRequestFactory;
 
     @RequestMapping(value = "/**")
     public void forward(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -49,13 +51,12 @@ public class MatchAllController {
         String target = targetHost + path;
         if (query != null && !query.isEmpty() && !query.equals("null")) {
             target = target + "?" + query;
-
         }
         log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
         URI newUri = new URI(target);
         String methodName = request.getMethod();
         HttpMethod httpMethod = HttpMethod.valueOf(methodName);
-        ClientHttpRequest delegate = new SimpleClientHttpRequestFactory().createRequest(newUri, httpMethod);
+        ClientHttpRequest delegate = httpRequestFactory.createRequest(newUri, httpMethod);
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
