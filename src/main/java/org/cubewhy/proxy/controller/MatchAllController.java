@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -53,10 +51,10 @@ public class MatchAllController {
             target = target + "?" + query;
         }
         log.info("Forward " + host + ":" + request.getLocalPort() + path + " to " + target);
-        URI newUri = new URI(target);
+        URL newUri = new URL(target);
         String methodName = request.getMethod();
         HttpMethod httpMethod = HttpMethod.valueOf(methodName);
-        ClientHttpRequest delegate = httpRequestFactory.createRequest(newUri, httpMethod);
+        ClientHttpRequest delegate = httpRequestFactory.createRequest(newUri.toURI(), httpMethod);
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
@@ -68,11 +66,11 @@ public class MatchAllController {
             delegate.getHeaders().addAll(headerName, arr);
         }
         StreamUtils.copy(request.getInputStream(), delegate.getBody());
+        response.setHeader("X-Real-IP", request.getRemoteAddr());
         try (ClientHttpResponse clientHttpResponse = delegate.execute()) {
             response.setStatus(clientHttpResponse.getStatusCode().value());
             clientHttpResponse.getHeaders().forEach((key, value) -> value.forEach(it -> response.setHeader(key, it)));
             StreamUtils.copy(clientHttpResponse.getBody(), response.getOutputStream());
         }
-        response.setHeader("X-Real-IP", request.getRemoteAddr());
     }
 }
