@@ -47,6 +47,13 @@ public class MatchAllController {
         String path = uri.getPath();
         String query = request.getQueryString();
         String target = targetHost + path;
+        String redirect = utils.findRedirect(host + path);
+        // match redirect
+        if (redirect != null) {
+            // send!
+            response.sendRedirect(redirect);
+            return;
+        }
         if (query != null && !query.isEmpty() && !query.equals("null")) {
             target = target + "?" + query;
         }
@@ -66,7 +73,7 @@ public class MatchAllController {
             delegate.getHeaders().addAll(headerName, arr);
         }
         StreamUtils.copy(request.getInputStream(), delegate.getBody());
-        response.setHeader("X-Real-IP", request.getRemoteAddr());
+
         try (ClientHttpResponse clientHttpResponse = delegate.execute()) {
             response.setStatus(clientHttpResponse.getStatusCode().value());
             clientHttpResponse.getHeaders().forEach((key, value) -> value.forEach(it -> response.setHeader(key, it)));

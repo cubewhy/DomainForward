@@ -14,28 +14,41 @@ import static org.cubewhy.proxy.DomainForwardApplication.configFile;
 
 @Component
 public class SimpleUtils {
-    @Resource
-    FileUtils utils;
-
     private JSONObject config;
     private JSONObject matches;
+    private JSONObject redirects;
+
+    public String findRedirect(String url) {
+        check();
+        if (redirects.containsKey(url)) {
+            return redirects.getString(url);
+        }
+        return null;
+    }
 
     public String getTargetHost(String host) throws IOException {
-        if (config == null) {
-            String jsonString = readAll(utils.getExternalFile(configFile));
-            config = JSON.parseObject(jsonString);
-            matches = patchMatches(config.getJSONObject("matches"));
-        }
+        check();
         if (matches.containsKey(host)) {
             return matches.getString(host);
         }
         return null;
     }
 
+    private void check() {
+        try {
+            String jsonString = readAll(new FileUtils().getExternalFile(configFile));
+            config = JSON.parseObject(jsonString);
+            matches = patchMatches(config.getJSONObject("matches"));
+            redirects = config.getJSONObject("redirects");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private JSONObject patchMatches(JSONObject raw) {
         JSONObject json = new JSONObject();
         for (String s : raw.keySet()) {
-            for (String domain: s.replace(" ", "").split(",")) {
+            for (String domain : s.replace(" ", "").split(",")) {
                 json.put(domain, raw.getString(s));
             }
         }
@@ -55,4 +68,5 @@ public class SimpleUtils {
     public String readAll(InputStream stream) throws IOException {
         return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
     }
+
 }
