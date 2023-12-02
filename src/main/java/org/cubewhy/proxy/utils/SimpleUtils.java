@@ -1,6 +1,7 @@
 package org.cubewhy.proxy.utils;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ public class SimpleUtils {
     private JSONObject config;
     private JSONObject matches;
     private JSONObject redirects;
+    private JSONArray www;
 
     public String findRedirect(String url) {
         check();
@@ -26,12 +28,17 @@ public class SimpleUtils {
         return null;
     }
 
-    public String getTargetHost(String host) throws IOException {
+    public String getTargetHost(String host) {
         check();
         if (matches.containsKey(host)) {
             return matches.getString(host);
         }
         return null;
+    }
+
+    public boolean getWwwRedirect(String host) {
+        check();
+        return www.contains(host);
     }
 
     private void check() {
@@ -40,6 +47,7 @@ public class SimpleUtils {
             config = JSON.parseObject(jsonString);
             matches = patchMatches(config.getJSONObject("matches"));
             redirects = config.getJSONObject("redirects");
+            www = config.getJSONArray("www-redirects");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

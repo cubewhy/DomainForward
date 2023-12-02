@@ -1,9 +1,14 @@
 {
   "matches": {
     "example.com": "http://127.0.0.1:3000",
-    "127.0.0.1": "https://baidu.com"
+    "127.0.0.1": "https://example.com"
   },
   "redirects": {
-    "127.0.0.1/example": "https://example.com"
-  }
+    "127.0.0.1/example": "https://example.com",
+    "127.0.0.1/lcaddon": "https://www.lunarclient.top"
+  },
+  "www-redirects": [
+    "lunarclient.top",
+    "lunarcn.lol"
+  ]
 }
